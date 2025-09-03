@@ -121,11 +121,11 @@ return {
 
   {
     "allaman/emoji.nvim",
-    dev = true,
+    -- dev = true,
     ft = "markdown",
     opts = {
       enable_cmp_integration = true,
-      plugin_path = vim.fn.expand("~/workspace/github.com/allaman"),
+      -- plugin_path = vim.fn.expand("~/workspace/github.com/allaman"),
     },
   },
 

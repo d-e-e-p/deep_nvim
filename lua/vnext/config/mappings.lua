@@ -103,3 +103,21 @@ map("n", "<leader>uI", function()
   vim.treesitter.inspect_tree()
   vim.api.nvim_input("I")
 end, { desc = "Inspect Tree" })
+
+-- custom mappings -s
+
+-- quit on q
+map("n", "q", ":quit<CR>")
+
+-- remap % to searchall
+map("n", "%", ":%s;", { desc = "Search Buffer" })
+
+-- space moves to next page etc
+map("n", "<Space>", "<C-F>", { noremap = true })
+map("n", "b", "<C-B>", { noremap = true })
+
+-- simplify / in search
+map("c", "/", "\\/", { noremap = true })
+
+-- inside your `init.lua`
+map("n", "<leader>rf", "<cmd>lua vim.lsp.buf.code_action()<CR>", { noremap = true, silent = true })

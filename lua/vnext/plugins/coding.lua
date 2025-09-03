@@ -9,6 +9,7 @@ return {
         lua = { "selene" },
         markdown = { "markdownlint-cli2" },
         yaml = { "yamllint" },
+        python = { "ruff" },
       },
     },
     config = function(_, opts)
@@ -58,6 +59,7 @@ return {
 
   {
     "allaman/kustomize.nvim",
+    enabled = false,
     dev = true,
     ft = "yaml",
     opts = {

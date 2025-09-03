@@ -24,9 +24,9 @@ require("lazy").setup({
     enabled = true, -- automatically check for config file changes and reload the ui
     notify = true, -- get a notification when changes are found
   },
-  dev = {
-    path = "~/workspace/github.com/allaman/",
-  },
+  --  dev = {
+  --    path = "~/workspace/github.com/allaman/",
+  --  },
   lockfile = "~/.lazy-lock.json",
   performance = {
     rtp = {
