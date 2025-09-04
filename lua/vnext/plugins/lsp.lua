@@ -4,6 +4,7 @@ return {
     event = { "BufReadPre", "BufNewFile" },
     opts = {
       servers = {
+        clangd = {},
         bashls = {},
         dockerls = {},
         gopls = {
@@ -50,10 +51,10 @@ return {
             format = {
               enable = false, -- let conform handle the formatting
             },
-            diagnostics = { globals = { "vim" } },
             telemetry = { enable = false },
             hint = { enable = true },
             Lua = {
+              diagnostics = { globals = { "vim" } },
               workspace = {
                 checkThirdParty = false,
               },

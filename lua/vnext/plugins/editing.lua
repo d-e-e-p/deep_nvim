@@ -41,7 +41,7 @@ return {
       }
       vim.g.autoformat = vim.g.autoformat
       vim.api.nvim_create_user_command("ToggleAutoformat", function()
-        vim.api.nvim_notify("Toggling autoformat", vim.log.levels.INFO, { title = "conform.nvim", timeout = 2000 })
+        vim.api.nvim_notify("Toggling autoformat", vim.log.levels.INFO, { title = "conform.nvim", timeout = 10000 })
         vim.g.autoformat = vim.g.autoformat == false and true or false
       end, { desc = "Toggling autoformat" })
       vim.keymap.set("n", "<leader>tF", "<cmd>ToggleAutoformat<cr>", { desc = "Toggle format on save" })
@@ -157,7 +157,11 @@ return {
   {
     "MagicDuck/grug-far.nvim",
     cmd = "GrugFar",
-    opts = {},
+    opts = {
+      keymaps = {
+        replace = { n = "<localleader>Rr" }, -- Replace in grug-far buffer
+      },
+    },
     keys = {
       -- stylua: ignore start
       { "<leader>R", "", desc = "Search & Replace" },

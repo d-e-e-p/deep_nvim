@@ -20,8 +20,17 @@ return {
         group = lint_augroup,
         callback = function()
           lint.try_lint()
+          vim.notify("Linting in progress...", vim.log.levels.INFO, {
+            timeout = 3000,
+            title = "nvim-lint",
+          })
         end,
       })
+      local ruff = require("lint").linters.ruff
+      ruff.args = {
+        "--config",
+        vim.fn.expand("~/build/pyproject.toml"),
+      }
     end,
   },
 

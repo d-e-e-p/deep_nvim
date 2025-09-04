@@ -44,9 +44,10 @@ return {
   {
     "folke/noice.nvim",
     event = "VeryLazy",
-    -- dependencies = {
-    --   { "rcarriga/nvim-notify" },
-    -- },
+    enabled = false,
+    dependencies = {
+      { "rcarriga/nvim-notify" },
+    },
     keys = {
       { "<leader>n", "", desc = "Noice" },
       { "<leader>nn", "<cmd>Noice all<cr>", desc = "Open Noice" },
@@ -102,4 +103,21 @@ return {
   --     vim.cmd([[colorscheme moonfly]])
   --   end,
   -- },
+  {
+    "rcarriga/nvim-notify",
+    config = function()
+      local notify = require("notify")
+
+      -- Configure the plugin
+      notify.setup({
+        timeout = 3000,
+        stages = "fade_in_slide_out",
+        render = "default",
+        max_width = 50,
+      })
+
+      -- Override vim.notify
+      vim.notify = notify
+    end,
+  },
 }
