@@ -1,5 +1,4 @@
-vim.g.mapleader = ","
+vim.g.mapleader = "+"
 vim.g.maplocalleader = ","
 _G.vnext = {}
---require("vnext.config")
-require("marshmalon")
+require("vnext.config")
