@@ -5,21 +5,20 @@ return {
     extensions = { "lazy", "quickfix", "neo-tree" },
     options = {
       disabled_filetypes = { statusline = { "neo-tree", "Outline", "snacks_picker_list" } },
-      theme = "ayu",
+      theme = "ayu_dark",
     },
     sections = {
       --- +-------------------------------------------------+
       --- | A | B | C                             X | Y | Z |
       --- +-------------------------------------------------+
-      lualine_a = {}, -- hide mode
-      lualine_c = {}, -- hide mode
+      lualine_a = { "mode" }, -- hide mode
       lualine_b = {
         --  "branch",
         "diff",
         "diagnostics",
         "lsp_status",
       },
-      lualine_d = {
+      lualine_c = {
         {
           "filename",
           file_status = true, -- Displays file status (readonly status, modified status)
