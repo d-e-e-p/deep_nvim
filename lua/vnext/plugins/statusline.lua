@@ -1,19 +1,89 @@
+-- to see config : lua print(vim.inspect(require('lualine').get_config()))
 return {
   "nvim-lualine/lualine.nvim",
   event = "BufReadPost",
   dependencies = {
     { "catppuccin/nvim", name = "catppuccin" },
     { "folke/tokyonight.nvim", name = "tokyonight" },
+    { "navarasu/onedark.nvim", name = "onedark" },
+    { "EdenEast/nightfox.nvim", name = "nightfox" },
+    { "rebelot/kanagawa.nvim", name = "kanagawa" },
+    { "Mofiqul/dracula.nvim", name = "dracula" },
+    { "ellisonleao/gruvbox.nvim", name = "gruvbox" },
+    { "sainnhe/sonokai", name = "sonokai" },
+    { "sainnhe/edge", name = "edge" },
+    { "Shatur/neovim-ayu", name = "ayu" },
   },
   opts = function()
     local themes = {
       "ayu_dark",
-      "onedark",
+      --  "onedark",
       "catppuccin",
       "tokyonight",
+      "nightfox",
+      "kanagawa",
+      "dracula",
+      "gruvbox_dark",
+      "sonokai",
+      "edge",
+      "nord",
+      "material",
+      "palenight",
+      "codedark",
+      "jellybeans",
+      "molokai",
     }
     math.randomseed(os.time())
     local random_theme = themes[math.random(#themes)]
+
+    local function get_current_theme()
+      local lualine_config = require("lualine").get_config()
+      local current_theme = lualine_config.options.theme or "auto"
+
+      -- If they don't match, show both
+      if random_theme ~= current_theme then
+        return "🎯 " .. random_theme .. " → 🎨 " .. current_theme
+      end
+
+      -- If they match, just show current theme
+      return "🎨 " .. current_theme
+    end
+
+    local function get_filename()
+      local file = vim.fn.expand("%")
+      local has_diagnostics = #vim.diagnostic.get(0) > 0
+      local has_lsp = #vim.lsp.get_clients({ bufnr = 0 }) > 0
+      local path_value = (has_diagnostics or has_lsp) and 0 or 3
+
+      local filename
+      if file == "" then
+        filename = "[No Name]"
+      elseif path_value == 0 then
+        filename = vim.fn.fnamemodify(file, ":t")
+      else
+        filename = vim.fn.fnamemodify(file, ":p:~")
+        -- add ft for non code files
+        local filetype_component = require("lualine.components.filetype"):new()
+        local formatted_filetype = filetype_component:update_status()
+        if formatted_filetype and formatted_filetype ~= "" then
+          filename = filename .. " (" .. formatted_filetype .. ")"
+        end
+        return filename
+      end
+
+      local f_status = ""
+      if vim.bo.modified then
+        f_status = f_status .. "[+] "
+      end
+      if vim.bo.readonly then
+        f_status = f_status .. "[RO] "
+      end
+      if file ~= "" and vim.fn.filereadable(file) == 0 and vim.bo.buftype == "" then
+        f_status = f_status .. "[New] "
+      end
+
+      return filename .. " " .. f_status
+    end
 
     return {
       extensions = { "lazy", "quickfix", "neo-tree" },
@@ -25,7 +95,7 @@ return {
         --- +-------------------------------------------------+
         --- | A | B | C                             X | Y | Z |
         --- +-------------------------------------------------+
-        lualine_a = { "mode" }, -- hide mode
+        lualine_a = { "mode", get_current_theme },
         lualine_b = {
           --  "branch",
           "diff",
@@ -33,34 +103,7 @@ return {
           "lsp_status",
         },
         lualine_c = {
-          function()
-            local file = vim.fn.expand("%")
-            local has_diagnostics = #vim.diagnostic.get(0) > 0
-            local has_lsp = #vim.lsp.get_clients({ bufnr = 0 }) > 0
-            local path_value = (has_diagnostics or has_lsp) and 0 or 3
-
-            local filename
-            if file == "" then
-              filename = "[No Name]"
-            elseif path_value == 0 then
-              filename = vim.fn.fnamemodify(file, ":t")
-            else
-              filename = vim.fn.fnamemodify(file, ":p:~")
-            end
-
-            local f_status = ""
-            if vim.bo.modified then
-              f_status = f_status .. "[+] "
-            end
-            if vim.bo.readonly then
-              f_status = f_status .. "[RO] "
-            end
-            if file ~= "" and vim.fn.filereadable(file) == 0 and vim.bo.buftype == "" then
-              f_status = f_status .. "[New] "
-            end
-
-            return filename .. " " .. f_status
-          end,
+          get_filename,
         },
 
         lualine_x = { "searchcount", "filetype" },
