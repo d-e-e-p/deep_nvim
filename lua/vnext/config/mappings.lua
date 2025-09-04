@@ -119,5 +119,5 @@ map("n", "b", "<C-B>", { noremap = true })
 -- simplify / in search
 map("c", "/", "\\/", { noremap = true })
 
--- inside your `init.lua`
-map("n", "<leader>rf", "<cmd>lua vim.lsp.buf.code_action()<CR>", { noremap = true, silent = true })
+-- already recorded as <leader>la
+-- map("n", "<leader>xa", "<cmd>lua vim.lsp.buf.code_action()<CR>", { noremap = true, silent = true })

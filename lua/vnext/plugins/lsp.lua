@@ -81,7 +81,8 @@ return {
           },
         },
         marksman = {},
-        pyright = {},
+        -- pyright = {},
+        -- ruff = {},
         templ = {},
         terraformls = {
           filetypes = { "terraform", "terraform-vars", "tf" },
@@ -180,6 +181,42 @@ return {
       })
 
       local lspconfig = require("lspconfig")
+      local util = require("lspconfig.util")
+
+      lspconfig.ruff.setup({
+        cmd = { "ruff", "server", "--config", vim.fn.expand("~/build/pyproject.toml") },
+        filetypes = { "python" },
+      })
+
+      lspconfig.pyright.setup({
+        cmd = { "pyright-langserver", "--stdio" },
+        filetypes = { "python" },
+        root_dir = function(fname)
+          local build_dir = vim.fn.expand("~/build")
+          if vim.fn.filereadable(build_dir .. "/pyproject.toml") == 1 then
+            return build_dir
+          end
+          return util.root_pattern("pyproject.toml", "setup.py", "setup.cfg", "requirements.txt", ".git")(fname)
+        end,
+        single_file_support = true,
+        settings = {
+          python = {
+            analysis = {
+              autoSearchPaths = true,
+              useLibraryCodeForTypes = true,
+              diagnosticMode = "openFilesOnly",
+              extraPaths = {
+                -- Add the current file's directory to Python path
+                vim.fn.fnamemodify(vim.fn.expand("%:p"), ":h"),
+                -- Add common project paths - adjust these to your actual project structure
+                -- vim.fn.expand("~/your-project/src"),
+                -- vim.fn.expand("~/your-project/lib"),
+              },
+            },
+          },
+        },
+      })
+
       local capabilities = vim.lsp.protocol.make_client_capabilities()
       capabilities = vim.tbl_deep_extend("force", capabilities, require("blink.cmp").get_lsp_capabilities())
       for server, server_opts in pairs(opts.servers) do

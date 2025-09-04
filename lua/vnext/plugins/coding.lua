@@ -1,6 +1,7 @@
 return {
   {
     "mfussenegger/nvim-lint",
+    enabled = false,
     event = { "BufWritePost", "BufReadPost", "InsertLeave" },
     opts = {
       linters_by_ft = {
@@ -9,7 +10,8 @@ return {
         lua = { "selene" },
         markdown = { "markdownlint-cli2" },
         yaml = { "yamllint" },
-        python = { "ruff" },
+        fish = { "fish" },
+        html = { "tidy" },
       },
     },
     config = function(_, opts)

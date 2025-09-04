@@ -33,17 +33,36 @@ return {
           "lsp_status",
         },
         lualine_c = {
-          {
-            "filename",
-            file_status = true, -- Displays file status (readonly status, modified status)
-            newfile_status = true, -- Display new file status (new file means no write after created)
-            path = 3, -- 0: Just the filename
-            -- 1: Relative path
-            -- 2: Absolute path
-            -- 3: Absolute path, with tilde as the home directory
-            -- 4: Filename and parent dir, with tilde as the home directory
-          },
+          function()
+            local file = vim.fn.expand("%")
+            local has_diagnostics = #vim.diagnostic.get(0) > 0
+            local has_lsp = #vim.lsp.get_clients({ bufnr = 0 }) > 0
+            local path_value = (has_diagnostics or has_lsp) and 0 or 3
+
+            local filename
+            if file == "" then
+              filename = "[No Name]"
+            elseif path_value == 0 then
+              filename = vim.fn.fnamemodify(file, ":t")
+            else
+              filename = vim.fn.fnamemodify(file, ":p:~")
+            end
+
+            local f_status = ""
+            if vim.bo.modified then
+              f_status = f_status .. "[+] "
+            end
+            if vim.bo.readonly then
+              f_status = f_status .. "[RO] "
+            end
+            if file ~= "" and vim.fn.filereadable(file) == 0 and vim.bo.buftype == "" then
+              f_status = f_status .. "[New] "
+            end
+
+            return filename .. " " .. f_status
+          end,
         },
+
         lualine_x = { "searchcount", "filetype" },
         lualine_y = { "progress" },
         lualine_z = { "location" },

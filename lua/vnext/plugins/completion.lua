@@ -147,10 +147,20 @@ return {
   -- lazydev blink integration
   {
     "saghen/blink.cmp",
+    dependencies = {
+      {
+        "Exafunction/codeium.nvim",
+      },
+    },
     opts = {
       sources = {
-        default = { "lazydev" },
+        default = { "lsp", "path", "snippets", "buffer", "codeium", "lazydev" },
         providers = {
+          codeium = {
+            name = "Codeium",
+            module = "codeium.blink",
+            async = true,
+          },
           lsp = {
             -- dont show LuaLS require statements when lazydev has items
             fallbacks = { "buffer" },

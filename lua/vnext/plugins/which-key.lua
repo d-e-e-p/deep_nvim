@@ -6,7 +6,7 @@ return {
     delay = 0,
     height = math.huge,
     icons = {
-      mappings = false, -- disable icons in keymaps
+      mappings = true,
     },
     sort = { "alphanum" },
     spec = {
@@ -20,6 +20,7 @@ return {
       { "<leader>t", group = "Toggles" },
       { "<leader>u", group = "UI" },
       { "<leader>w", group = "Window" },
+      { "<leader>x", group = "Trouble" },
       { "zv", hidden = true },
       { "zi", hidden = true },
       { "ze", hidden = true },
@@ -37,6 +38,7 @@ return {
       { "zC", hidden = true },
       { "zx", hidden = true },
     },
+    -- debug = true,
   },
   config = function(_, opts)
     require("which-key").setup(opts)
