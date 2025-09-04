@@ -49,26 +49,30 @@ return {
       return "🎨 " .. current_theme
     end
 
+    -- Boolean function to check if buffer has diagnostics or LSP
+    local function not_code()
+      local no_diagnostics = #vim.diagnostic.get(0) == 0
+      local no_lsp = #vim.lsp.get_clients({ bufnr = 0 }) == 0
+      return no_diagnostics and no_lsp
+    end
+
+    local function is_code()
+      return not not_code()
+    end
+
+    -- Main filename function using the boolean
     local function get_filename()
       local file = vim.fn.expand("%")
-      local has_diagnostics = #vim.diagnostic.get(0) > 0
-      local has_lsp = #vim.lsp.get_clients({ bufnr = 0 }) > 0
-      local path_value = (has_diagnostics or has_lsp) and 0 or 3
-
+      local not_code_v = not_code()
       local filename
+
+      -- add longer fn for non code files
       if file == "" then
         filename = "[No Name]"
-      elseif path_value == 0 then
-        filename = vim.fn.fnamemodify(file, ":t")
+      elseif not_code_v then
+        filename = vim.fn.fnamemodify(file, ":p:~") -- full path
       else
-        filename = vim.fn.fnamemodify(file, ":p:~")
-        -- add ft for non code files
-        local filetype_component = require("lualine.components.filetype"):new()
-        local formatted_filetype = filetype_component:update_status()
-        if formatted_filetype and formatted_filetype ~= "" then
-          filename = filename .. " (" .. formatted_filetype .. ")"
-        end
-        return filename
+        filename = vim.fn.fnamemodify(file, ":t") -- just filename
       end
 
       local f_status = ""
@@ -95,7 +99,8 @@ return {
         --- +-------------------------------------------------+
         --- | A | B | C                             X | Y | Z |
         --- +-------------------------------------------------+
-        lualine_a = { "mode", get_current_theme },
+        --- path 0: fn 1: rel path 2: ab path 3: Absolute path, with ~ path 4: fn with dir
+        lualine_a = { "mode" },
         lualine_b = {
           --  "branch",
           "diff",
@@ -103,10 +108,16 @@ return {
           "lsp_status",
         },
         lualine_c = {
-          get_filename,
+          { "filename", newfile_status = true, path = 4, cond = not_code },
+          { "filename", newfile_status = true, path = 0, cond = is_code },
         },
 
-        lualine_x = { "searchcount", "filetype" },
+        lualine_x = {
+          "searchcount",
+          get_current_theme,
+          { "filetype", icon_only = false, cond = not_code },
+          { "filetype", icon_only = true, cond = is_code },
+        },
         lualine_y = { "progress" },
         lualine_z = { "location" },
       },
@@ -116,9 +127,7 @@ return {
     -- For themes that require a plugin, attempt to load the corresponding colorscheme.
     -- This is because their lualine component might depend on the main plugin being active.
     local theme_name = opts.options.theme
-    if theme_name == "catppuccin" or theme_name == "tokyonight" then
-      pcall(vim.cmd.colorscheme, theme_name)
-    end
+    pcall(vim.cmd.colorscheme, theme_name)
 
     -- Show info when recording a macro
     local function is_macro_recording()
