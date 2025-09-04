@@ -1,41 +1,63 @@
 return {
   "nvim-lualine/lualine.nvim",
   event = "BufReadPost",
-  opts = {
-    extensions = { "lazy", "quickfix", "neo-tree" },
-    options = {
-      disabled_filetypes = { statusline = { "neo-tree", "Outline", "snacks_picker_list" } },
-      theme = "ayu_dark",
-    },
-    sections = {
-      --- +-------------------------------------------------+
-      --- | A | B | C                             X | Y | Z |
-      --- +-------------------------------------------------+
-      lualine_a = { "mode" }, -- hide mode
-      lualine_b = {
-        --  "branch",
-        "diff",
-        "diagnostics",
-        "lsp_status",
-      },
-      lualine_c = {
-        {
-          "filename",
-          file_status = true, -- Displays file status (readonly status, modified status)
-          newfile_status = true, -- Display new file status (new file means no write after created)
-          path = 3, -- 0: Just the filename
-          -- 1: Relative path
-          -- 2: Absolute path
-          -- 3: Absolute path, with tilde as the home directory
-          -- 4: Filename and parent dir, with tilde as the home directory
-        },
-      },
-      lualine_x = { "searchcount", "filetype" },
-      lualine_y = { "progress" },
-      lualine_z = { "location" },
-    },
+  dependencies = {
+    { "catppuccin/nvim", name = "catppuccin" },
+    { "folke/tokyonight.nvim", name = "tokyonight" },
   },
+  opts = function()
+    local themes = {
+      "ayu_dark",
+      "onedark",
+      "catppuccin",
+      "tokyonight",
+    }
+    math.randomseed(os.time())
+    local random_theme = themes[math.random(#themes)]
+
+    return {
+      extensions = { "lazy", "quickfix", "neo-tree" },
+      options = {
+        disabled_filetypes = { statusline = { "neo-tree", "Outline", "snacks_picker_list" } },
+        theme = random_theme,
+      },
+      sections = {
+        --- +-------------------------------------------------+
+        --- | A | B | C                             X | Y | Z |
+        --- +-------------------------------------------------+
+        lualine_a = { "mode" }, -- hide mode
+        lualine_b = {
+          --  "branch",
+          "diff",
+          "diagnostics",
+          "lsp_status",
+        },
+        lualine_c = {
+          {
+            "filename",
+            file_status = true, -- Displays file status (readonly status, modified status)
+            newfile_status = true, -- Display new file status (new file means no write after created)
+            path = 3, -- 0: Just the filename
+            -- 1: Relative path
+            -- 2: Absolute path
+            -- 3: Absolute path, with tilde as the home directory
+            -- 4: Filename and parent dir, with tilde as the home directory
+          },
+        },
+        lualine_x = { "searchcount", "filetype" },
+        lualine_y = { "progress" },
+        lualine_z = { "location" },
+      },
+    }
+  end,
   config = function(_, opts)
+    -- For themes that require a plugin, attempt to load the corresponding colorscheme.
+    -- This is because their lualine component might depend on the main plugin being active.
+    local theme_name = opts.options.theme
+    if theme_name == "catppuccin" or theme_name == "tokyonight" then
+      pcall(vim.cmd.colorscheme, theme_name)
+    end
+
     -- Show info when recording a macro
     local function is_macro_recording()
       local reg = vim.fn.reg_recording()
