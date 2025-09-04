@@ -81,3 +81,27 @@ which_key.add({ visual_mappings })
 
 -- insert commands
 vim.keymap.set('i', '<Right>', '<Right>', { noremap = true }) -- Make the right arrow behave normally in insert mode
+
+
+local function map(mode, l, r, opts)
+    opts = opts or {}
+    vim.keymap.set(mode, l, r, opts)
+end
+
+-- custom mappings -s
+
+-- quit on q
+map("n", "q", ":quit<CR>")
+
+-- remap % to searchall
+map("n", "%", ":%s;", { desc = "Search Buffer" })
+
+-- space moves to next page etc
+map("n", "<Space>", "<C-F>", { noremap = true })
+map("n", "b", "<C-B>", { noremap = true })
+
+-- simplify / in search
+map("c", "/", "\\/", { noremap = true })
+
+-- TODO: move to anothe diag key
+map("n", "<leader>rf", "<cmd>lua vim.lsp.buf.code_action()<CR>", { noremap = true, silent = true })
