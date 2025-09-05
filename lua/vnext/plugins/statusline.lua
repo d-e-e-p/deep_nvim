@@ -60,33 +60,24 @@ return {
       return not not_code()
     end
 
-    -- Main filename function using the boolean
-    local function get_filename()
-      local file = vim.fn.expand("%")
-      local not_code_v = not_code()
-      local filename
+    local function is_not_unix_fileformat()
+      return vim.bo.fileformat ~= "unix"
+    end
 
-      -- add longer fn for non code files
-      if file == "" then
-        filename = "[No Name]"
-      elseif not_code_v then
-        filename = vim.fn.fnamemodify(file, ":p:~") -- full path
+    local function is_not_utf8()
+      return vim.bo.fileencoding ~= "utf-8"
+    end
+
+    local function get_hostname()
+      local base = "deepmac"
+      local name = vim.fn.hostname()
+      -- strip everything after the first dot
+      local short = name:match("^[^.]+") or name
+      if short ~= base then
+        return short
       else
-        filename = vim.fn.fnamemodify(file, ":t") -- just filename
+        return ""
       end
-
-      local f_status = ""
-      if vim.bo.modified then
-        f_status = f_status .. "[+] "
-      end
-      if vim.bo.readonly then
-        f_status = f_status .. "[RO] "
-      end
-      if file ~= "" and vim.fn.filereadable(file) == 0 and vim.bo.buftype == "" then
-        f_status = f_status .. "[New] "
-      end
-
-      return filename .. " " .. f_status
     end
 
     return {
@@ -105,7 +96,13 @@ return {
           --  "branch",
           "diff",
           "diagnostics",
-          "lsp_status",
+          {
+            "lsp_status",
+            symbols = {
+              spinner = { "←", "↖", "↑", "↗", "→", "↘", "↓", "↙" },
+              done = "✓",
+            },
+          },
         },
         lualine_c = {
           { "filename", newfile_status = true, path = 4, cond = not_code },
@@ -117,6 +114,9 @@ return {
           get_current_theme,
           { "filetype", icon_only = false, cond = not_code },
           { "filetype", icon_only = true, cond = is_code },
+          { "encoding", cond = is_not_utf8, show_bomb = true },
+          { "fileformat", cond = is_not_unix_fileformat },
+          get_hostname,
         },
         lualine_y = { "progress" },
         lualine_z = { "location" },
@@ -144,48 +144,6 @@ return {
       separator = { left = "", right = "" },
       cond = function()
         return is_macro_recording() ~= ""
-      end,
-    })
-
-    -- Don't display encoding if encoding is UTF-8
-    local function encoding()
-      local ret, _ = (vim.bo.fenc or vim.go.enc):gsub("^utf%-8$", "")
-      return ret
-    end
-
-    table.insert(opts.sections.lualine_x, 1, {
-      encoding,
-      cond = function()
-        return encoding() ~= ""
-      end,
-    })
-
-    -- Don't display fileformat if fileformat is unix
-    local function fileformat()
-      local ret, _ = vim.bo.fileformat:gsub("^unix$", "")
-      return ret
-    end
-
-    table.insert(opts.sections.lualine_x, 1, {
-      fileformat,
-      cond = function()
-        return fileformat() ~= ""
-      end,
-    })
-
-    local function hostname()
-      local name = vim.fn.hostname()
-      if name ~= "deepmac.local" then
-        return name
-      else
-        return ""
-      end
-    end
-
-    table.insert(opts.sections.lualine_c, 1, {
-      hostname,
-      cond = function()
-        return hostname() ~= ""
       end,
     })
 
