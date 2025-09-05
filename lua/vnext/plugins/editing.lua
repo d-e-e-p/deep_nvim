@@ -134,6 +134,9 @@ return {
     "saghen/blink.cmp",
     dependencies = { "allaman/emoji.nvim", "saghen/blink.compat" },
     opts = {
+      cmdline = {
+        enabled = false,
+      },
       sources = {
         default = { "emoji" },
         providers = {

@@ -1,6 +1,7 @@
 -- TODO: profiler
 
 ---@module 'snacks'
+vim.g.snacks_toggle_mouse = vim.g.snacks_toggle_mouse or (vim.o.mouse ~= "")
 
 return {
   "folke/snacks.nvim",
@@ -127,7 +128,31 @@ return {
         Snacks.toggle.option("conceallevel", { off = 0, on = vim.o.conceallevel > 0 and vim.o.conceallevel or 2 }):map("<leader>uc")
         Snacks.toggle.inlay_hints():map("<leader>uh")
         Snacks.toggle.dim():map("<leader>uD")
+        --Snacks.toggle.option("mouse", { name = "Mouse Mode", off = "", on = "nv", global=true }):map("m")
         -- stylua: ignore end
+        Snacks.toggle
+          .new({
+            id = "mouse_mode",
+            name = "Mouse Mode",
+            get = function()
+              -- Return current state
+              return vim.g.snacks_toggle_mouse or false
+            end,
+            set = function()
+              -- Toggle the actual feature
+              if vim.o.mouse == "" then
+                vim.o.mouse = "nv" -- enable mouse
+              else
+                vim.o.mouse = "" -- disable mouse
+              end
+              -- Store the state in a global variable
+              vim.g.snacks_toggle_mouse = not (vim.g.snacks_toggle_mouse or false)
+            end,
+            off = "Disabled",
+            on = "Enabled",
+            global = true, -- applies globally
+          })
+          :map("m") -- maps the toggle to "m"
       end,
     })
   end,

@@ -43,7 +43,7 @@ o.listchars       = {   -- define invisible chars
     space = "·",
     nbsp = "␣",
 }
-o.mouse           = "a" -- enable mouse see :h mouse
+o.mouse           = "nv" -- enable mouse see :h mouse
 o.mousefocus      = true -- might cause menu problems
 o.selectmode      = ""
 o.number          = false
@@ -65,3 +65,4 @@ o.updatetime      = 250                                 -- faster completion
 o.title           = true
 o.cmdheight       = 1
 -- stylua: ignore end
+o.modelines = 1 -- only scan the very first/last line

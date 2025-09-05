@@ -17,9 +17,9 @@ return {
   opts = function()
     local themes = {
       "ayu_dark",
-      --  "onedark",
+      "onedark",
       "catppuccin",
-      "tokyonight",
+      -- "tokyonight",
       "nightfox",
       "kanagawa",
       "dracula",
@@ -35,6 +35,9 @@ return {
     }
     math.randomseed(os.time())
     local random_theme = themes[math.random(#themes)]
+    -- safely require the theme module for lualine
+    pcall(require, "lualine.themes." .. random_theme)
+    pcall(vim.cmd.colorscheme, random_theme)
 
     local function get_current_theme()
       local lualine_config = require("lualine").get_config()
@@ -80,6 +83,14 @@ return {
       end
     end
 
+    local function get_mouse_mode()
+        if vim.o.mouse == "" then
+          return "⌨️  "
+        else
+          return "🖱 " 
+        end
+    end
+
     return {
       extensions = { "lazy", "quickfix", "neo-tree" },
       options = {
@@ -111,6 +122,7 @@ return {
 
         lualine_x = {
           "searchcount",
+          get_mouse_mode,
           get_current_theme,
           { "filetype", icon_only = false, cond = not_code },
           { "filetype", icon_only = true, cond = is_code },
@@ -124,11 +136,6 @@ return {
     }
   end,
   config = function(_, opts)
-    -- For themes that require a plugin, attempt to load the corresponding colorscheme.
-    -- This is because their lualine component might depend on the main plugin being active.
-    local theme_name = opts.options.theme
-    pcall(vim.cmd.colorscheme, theme_name)
-
     -- Show info when recording a macro
     local function is_macro_recording()
       local reg = vim.fn.reg_recording()

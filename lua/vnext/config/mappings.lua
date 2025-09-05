@@ -113,11 +113,15 @@ map("n", "q", ":quit<CR>")
 map("n", "%", ":%s;", { desc = "Search Buffer" })
 
 -- space moves to next page etc
-map("n", "<Space>", "<C-F>", { noremap = true })
-map("n", "b", "<C-B>", { noremap = true })
+map("n", "<Space>", "<C-F>", { noremap = true, desc = "space advances to next page" })
+map("n", "b", "<C-B>", { noremap = true, desc = "go back a page" })
 
 -- simplify / in search
 map("c", "/", "\\/", { noremap = true })
 
 -- already recorded as <leader>la
 -- map("n", "<leader>xa", "<cmd>lua vim.lsp.buf.code_action()<CR>", { noremap = true, silent = true })
+
+-- Move to start/end of command line
+map("c", "<C-A>", "<Home>", { noremap = true }) -- start of line
+map("c", "<C-E>", "<End>", { noremap = true }) -- end of line
